@@ -1,0 +1,10 @@
+THE WITCHER 1 — DUAL SUBTITLES TOOL v10
+Author: ExiZZ • Nexus Mods
+
+This release contains a Windows executable built from the project source using PyInstaller.
+The bundled executable includes the runtime required by the tool; end users do not need to install Python.
+
+PyInstaller
+https://pyinstaller.org/
+
+PyInstaller is distributed under its own open-source license. This notice is provided for attribution.

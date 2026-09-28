@@ -1,0 +1,202 @@
+THE WITCHER 1 — DUAL SUBTITLES TOOL v10
+Author: ExiZZ • Nexus Mods
+
+============================================================
+1. OVERVIEW
+============================================================
+This tool creates bilingual text in The Witcher: Enhanced Edition using the game's existing
+localization resources. Primary text remains first and Secondary text is added underneath.
+
+The program automatically detects valid dialog_*.tlk files in the game's Data folder when it starts.
+There is no language-scan button because the scan is automatic.
+
+Supported official language IDs:
+3  English
+5  Polish (Polski)
+10 German (Deutsch)
+11 French (Français)
+12 Spanish (Español)
+13 Italian (Italiano)
+14 Russian (Русский)
+15 Czech (Čeština)
+16 Hungarian (Magyar)
+20 Korean (한국어)
+21 Traditional Chinese (繁體中文)
+22 Simplified Chinese (简体中文)
+
+Only languages whose valid dialog_*.tlk files are actually installed are offered in the GUI.
+
+============================================================
+2. BASIC WORKFLOW
+============================================================
+1. Close The Witcher 1.
+2. Run START_HERE.bat.
+3. Select the game folder if the default path is wrong.
+4. Choose Primary language.
+5. Choose Secondary language.
+6. Click SAFE TEST.
+7. SAFE TEST processes the complete DLG + QST set.
+8. If SAFE TEST succeeds, click INSTALL LAST TEST.
+9. Start the game and check dialogue and journal text.
+
+The old Batch, Exact Resource and Exact Fields controls are not part of the user workflow. They were
+development/debug controls and the final installer always processes the complete game.
+
+============================================================
+3. PRIMARY / SECONDARY AND FONT COMPATIBILITY
+============================================================
+The selected Primary language is the game's active language/font context. The combined dual text is
+therefore drawn using that context.
+
+Some language schemes do not contain every glyph required by another language. If Secondary text
+appears as punctuation, boxes, symbols or otherwise unreadable characters:
+
+1. Restore the original files if you already installed the previous pair.
+2. Swap Primary and Secondary.
+3. Run SAFE TEST again.
+4. Install the new successful test.
+
+Example observed during development:
+Polish → Russian could display Cyrillic incorrectly.
+Russian → Polish displayed both correctly.
+
+This is the intended practical fallback for the final universal release.
+
+Chinese may use a different font scheme and can have wider spacing or a visibly different style.
+If Chinese is readable when Chinese is Primary, keep Chinese as Primary.
+
+============================================================
+4. ENGLISH MENU + SETTINGS + JOURNAL UI
+============================================================
+The optional checkbox:
+ENGLISH MENU + SETTINGS + JOURNAL UI
+
+When enabled, the selected Primary TLK is used as the base and known English interface/general
+strings are taken from dialog_3.tlk. This is separate from the DLG/QST dual-text merge.
+
+WHY CAN SOME MENU / SETTINGS ENTRIES REMAIN IN ENGLISH?
+The Witcher 1 does not contain a complete localized version of every UI element for every language.
+Some menu and Settings entries use the game's original English fallback because a localized entry is
+not present for that language. This is a limitation of the game's localization resources, not a failure
+of the dual-subtitle merge.
+
+This tool does not machine-translate missing UI strings. It uses the localization resources already
+provided by the game. As a result, a language pair can have fully working dual dialogue/subtitles while
+some interface entries still appear in English.
+
+If ENGLISH MENU + SETTINGS + JOURNAL UI is enabled, English UI text is intentional: the option explicitly
+uses the English interface/general strings where supported.
+
+This limitation should be expected in the final release and is not a reason to reinstall or rebuild the
+language pair.
+
+============================================================
+5. SAFE TEST
+============================================================
+SAFE TEST never replaces the real game files.
+
+It builds a complete candidate containing:
+• DLG resources
+• QST resources
+• optional English UI TLK candidate
+
+The build is validated before it is considered ready for installation.
+
+============================================================
+6. INSTALL LAST TEST
+============================================================
+INSTALL LAST TEST installs exactly the candidate produced by the successful SAFE TEST.
+Original game files are backed up before replacement.
+
+Do not repeatedly install different language pairs on top of one another. For a clean language-pair
+change, use RESTORE ORIGINAL first, then build and install the new pair.
+
+============================================================
+7. RESTORE ORIGINAL
+============================================================
+RESTORE ORIGINAL restores the original BIF/TLK files backed up by this tool.
+
+If changing the language pair after an installation, the recommended sequence is:
+RESTORE ORIGINAL → choose Primary + Secondary → SAFE TEST → INSTALL LAST TEST.
+
+============================================================
+8. SAVE PATCH
+============================================================
+PATCH SAVE patches one selected .TheWitcherSave.
+PATCH ALL SAVES patches every .TheWitcherSave in the selected save folder.
+
+The same Primary + Secondary pair selected in the GUI is used for the save patch.
+Each save receives a .dual_backup before replacement, and the original save filename is preserved.
+
+Close The Witcher 1 before patching saves.
+
+If a patched save needs to be restored, use the corresponding .dual_backup copy.
+
+============================================================
+9. LANGUAGE DETECTION
+============================================================
+The tool reads the language ID stored inside each valid dialog_*.tlk rather than blindly trusting the
+filename. It then keeps one usable resource per language ID for the GUI, preferring the exact
+filename dialog_<ID>.tlk when duplicates exist.
+
+Hungarian is language ID 16 and is displayed as:
+Hungarian (Magyar)
+
+"Magyar" is simply the native Hungarian name; it is not a separate language.
+
+If a language is genuinely missing from the GUI, check Data for its dialog_<ID>.tlk and check the
+Witcher1_Dual_Subtitles.log created beside the tool.
+
+============================================================
+10. TECHNICAL ARCHITECTURE
+============================================================
+Witcher 1 uses two relevant localization layers:
+
+1. dialog_*.tlk
+   UI, menu and general localization strings.
+
+2. DLG / QST GFF resources
+   Dialogue, quest and journal localization fields.
+
+For the actual Witcher 1 resources used by this tool, GFF localization slots are mapped from the
+TLK language ID by multiplying it by two:
+
+3→6
+5→10
+10→20
+11→22
+12→24
+13→26
+14→28
+15→30
+16→32
+20→40
+21→42
+22→44
+
+DLG: the selected Primary localized text is kept and Secondary text is appended on the next line.
+QST: localized quest/journal fields are patched; slot 0 is also patched when it exactly matches the
+clean Primary text, preserving the observed journal fallback behavior.
+
+============================================================
+11. OLD DUAL CLEANUP
+============================================================
+Before a new DLG/QST build, the engine removes only an appended newline suffix when that complete
+suffix exactly matches another language slot in the same CExoLocString.
+
+This prevents an older English/Russian/etc. dual patch from accumulating when the user changes the
+language pair.
+
+============================================================
+12. FILES IN THIS PACKAGE
+============================================================
+START_HERE.bat
+Witcher1_Dual_Subtitles.exe
+README.txt
+GUIDE.txt
+THIRD-PARTY-NOTICES.txt
+
+This is the public Python-free release. The executable contains the runtime required by the tool.
+End users do not need Python, PyInstaller, or any other development software.
+
+Author: ExiZZ • Nexus Mods
